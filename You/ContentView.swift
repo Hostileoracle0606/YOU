@@ -11,35 +11,33 @@ import SwiftData
 struct ContentView: View {
     @Query var profiles: [UserProfile]
 
-    private var hasCompletedOnboarding: Bool {
-        profiles.first?.onboardingCompleted ?? false
-    }
+    private var profile: UserProfile? { profiles.first }
 
     var body: some View {
-        if hasCompletedOnboarding {
+        if profile?.onboardingCompleted == true {
             MainTabView()
         } else {
-            OnboardingPlaceholderView()
+            OnboardingPlaceholderView(existingProfile: profile)
         }
     }
 }
 
 /// Temporary onboarding entry point — replaced by full OnboardingFlowView in Phase 8
 struct OnboardingPlaceholderView: View {
+    let existingProfile: UserProfile?
     @Environment(\.modelContext) var modelContext
-    @Query var profiles: [UserProfile]
+    @State private var selectedGoals: Set<Goal> = []
 
     var body: some View {
-        GoalSelectionView(selectedGoals: .constant([])) {
-            // Mark onboarding complete so we route to MainTabView
+        GoalSelectionView(selectedGoals: $selectedGoals) {
             let profile: UserProfile
-            if let existing = profiles.first {
+            if let existing = existingProfile {
                 profile = existing
             } else {
-                let p = UserProfile()
-                modelContext.insert(p)
-                profile = p
+                profile = UserProfile()
+                modelContext.insert(profile)
             }
+            profile.selectedGoals = selectedGoals.map(\.rawValue)
             profile.onboardingCompleted = true
         }
     }
@@ -52,21 +50,13 @@ struct MainTabView: View {
         ZStack(alignment: .bottom) {
             YouTheme.background.ignoresSafeArea()
 
-            Group {
-                switch selectedTab {
-                case .home:
-                    NavigationStack {
-                        HomeView()
-                    }
-                case .checkIn:
-                    NavigationStack {
-                        CheckInPlaceholderView()
-                    }
-                case .insights:
-                    NavigationStack {
-                        InsightsPlaceholderView()
-                    }
-                }
+            ZStack {
+                NavigationStack { HomeView() }
+                    .opacity(selectedTab == .home ? 1 : 0)
+                NavigationStack { CheckInPlaceholderView() }
+                    .opacity(selectedTab == .checkIn ? 1 : 0)
+                NavigationStack { InsightsPlaceholderView() }
+                    .opacity(selectedTab == .insights ? 1 : 0)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
 

@@ -17,8 +17,12 @@ struct YouApp: App {
             HabitLog.self,
         ])
         let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
-        // TODO: Replace fatalError with graceful error recovery before TestFlight
-        return try! ModelContainer(for: schema, configurations: [config])
+        do {
+            return try ModelContainer(for: schema, configurations: [config])
+        } catch {
+            // TODO: Replace with graceful error recovery before TestFlight
+            fatalError("Failed to create ModelContainer: \(error)")
+        }
     }()
 
     var body: some Scene {
@@ -39,23 +43,23 @@ struct YouApp: App {
         guard count == 0 else { return }
 
         let placeholderUserId = "seed-user"
-        let seedHabits: [(String, String, String)] = [
-            ("Morning Meditation", "mindfulness", "figure.mind.and.body"),
-            ("Cold Shower", "recovery", "drop.fill"),
-            ("10k Steps", "movement", "figure.walk"),
-            ("No screens 1hr before bed", "sleep", "moon.fill"),
-            ("Journaling", "reflection", "book"),
+        let seedHabits: [(name: String, category: String, sfSymbol: String, goalType: String, streak: Int, rate: Double)] = [
+            ("Morning Meditation", "mindfulness", "figure.mind.and.body", "focusCognition", 7, 0.85),
+            ("Cold Shower", "recovery", "drop.fill", "energy", 3, 0.72),
+            ("10k Steps", "movement", "figure.walk", "strength", 12, 0.60),
+            ("No screens 1hr before bed", "sleep", "moon.fill", "sleepQuality", 1, 0.90),
+            ("Journaling", "reflection", "book", "stress", 5, 0.68),
         ]
 
-        for (name, category, symbol) in seedHabits {
+        for seed in seedHabits {
             let habit = Habit(
-                name: name,
-                category: category,
+                name: seed.name,
+                category: seed.category,
                 userId: placeholderUserId,
-                goalType: "sleepQuality",
-                sfSymbol: symbol,
-                currentStreak: Int.random(in: 0...14),
-                completionRate: Double.random(in: 0.4...0.9)
+                goalType: seed.goalType,
+                sfSymbol: seed.sfSymbol,
+                currentStreak: seed.streak,
+                completionRate: seed.rate
             )
             context.insert(habit)
         }
