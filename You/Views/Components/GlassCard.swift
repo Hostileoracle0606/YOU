@@ -1,18 +1,23 @@
 import SwiftUI
 
 struct GlassCardModifier: ViewModifier {
-    var cornerRadius: CGFloat = 20
-    var borderColor: Color = YouTheme.glassBorder
+    let cornerRadius: CGFloat
+    let borderColor: Color
+
+    init(cornerRadius: CGFloat = 20, borderColor: Color = YouTheme.glassBorder) {
+        self.cornerRadius = cornerRadius
+        self.borderColor = borderColor
+    }
 
     func body(content: Content) -> some View {
         content
             .background(
-                RoundedRectangle(cornerRadius: cornerRadius)
-                    .fill(.ultraThinMaterial)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: cornerRadius)
-                            .fill(YouTheme.glassBackground)
-                    )
+                ZStack {
+                    RoundedRectangle(cornerRadius: cornerRadius)
+                        .fill(.ultraThinMaterial)
+                    RoundedRectangle(cornerRadius: cornerRadius)
+                        .fill(YouTheme.glassBackground)
+                }
             )
             .overlay(
                 RoundedRectangle(cornerRadius: cornerRadius)
