@@ -1,0 +1,19 @@
+# Worktrees
+.worktrees/
+
+# Xcode
+*.xcodeproj/xcuserdata/
+*.xcworkspace/xcuserdata/
+DerivedData/
+*.hmap
+*.ipa
+*.xcarchive
+.build/
+build/
+
+# macOS
+.DS_Store
+*.swp
+
+# Swift Package Manager
+.swiftpm/
