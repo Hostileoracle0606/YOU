@@ -1,4 +1,4 @@
-import SwiftUI
+import Foundation
 
 enum Goal: String, CaseIterable, Identifiable, Codable {
     case focusCognition = "Focus & Cognition"

@@ -10,6 +10,7 @@ enum YouTheme {
 
     static let primary = Color(hex: 0xD2BBFF)
     static let primaryContainer = Color(hex: 0x7C3AED)
+    static let primaryContainerDark = Color(hex: 0x523787)
     static let onPrimary = Color(hex: 0x3F008E)
 
     static let secondary = Color(hex: 0x4EDEA3)

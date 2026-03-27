@@ -2,6 +2,7 @@ import SwiftUI
 
 struct GoalSelectionView: View {
     @Binding var selectedGoals: Set<Goal>
+    var onBack: (() -> Void)?
     var onContinue: () -> Void
 
     let columns = [
@@ -16,10 +17,11 @@ struct GoalSelectionView: View {
             VStack(spacing: 0) {
                 // Header
                 HStack {
-                    Button(action: {}) {
+                    Button(action: { onBack?() }) {
                         Image(systemName: "chevron.left")
                             .foregroundColor(YouTheme.primary)
                     }
+                    .opacity(onBack == nil ? 0 : 1)  // Hidden on screen 1 where there's no previous screen
                     Spacer()
                     Text("1 of 4")
                         .font(YouTheme.label(11))
@@ -37,7 +39,7 @@ struct GoalSelectionView: View {
                         // Hero
                         VStack(alignment: .leading, spacing: 12) {
                             Text("What's your primary goal?")
-                                .font(.system(size: 28, weight: .bold))
+                                .font(YouTheme.headline(28))
                                 .tracking(-1.2)
                                 .foregroundColor(.white)
 
@@ -68,8 +70,6 @@ struct GoalSelectionView: View {
                     .padding(.horizontal, 24)
                     .padding(.bottom, 160)
                 }
-
-                Spacer()
             }
 
             // Bottom CTA
@@ -85,7 +85,7 @@ struct GoalSelectionView: View {
                     .padding(.vertical, 16)
                     .background(
                         LinearGradient(
-                            colors: [YouTheme.primaryContainer, Color(hex: 0x523787)],
+                            colors: [YouTheme.primaryContainer, YouTheme.primaryContainerDark],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         )
@@ -133,7 +133,7 @@ struct GoalCard: View {
                 }
 
                 Text(goal.rawValue)
-                    .font(.system(size: 14, weight: .bold))
+                    .font(YouTheme.label(14))
                     .tracking(-0.3)
                     .foregroundColor(isSelected ? .white : YouTheme.onSurfaceVariant)
                     .lineLimit(2)
@@ -143,11 +143,7 @@ struct GoalCard: View {
             .padding(20)
             .glassCard(
                 cornerRadius: 16,
-                borderColor: isSelected ? YouTheme.primary.opacity(0.2) : Color.white.opacity(0.05)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .stroke(isSelected ? YouTheme.primary.opacity(0.3) : .clear, lineWidth: 1)
+                borderColor: isSelected ? YouTheme.primary.opacity(0.3) : Color.white.opacity(0.05)
             )
             .shadow(color: isSelected ? YouTheme.primaryContainer.opacity(0.25) : .clear, radius: 20)
         }
