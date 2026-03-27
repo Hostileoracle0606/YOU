@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct HabitRingsView: View {
-    let habits: [(name: String, progress: Double, color: Color, symbol: String)]
+    let habits: [(id: String, name: String, progress: Double, color: Color, symbol: String)]
 
     var overallProgress: Int {
         guard !habits.isEmpty else { return 0 }
@@ -24,7 +24,7 @@ struct HabitRingsView: View {
                 .frame(width: 320, height: 320)
 
             // Rings (up to 3)
-            ForEach(Array(habits.prefix(3).enumerated()), id: \.offset) { index, habit in
+            ForEach(Array(habits.prefix(3).enumerated()), id: \.element.id) { index, habit in
                 let radius: CGFloat = CGFloat(144 - index * 40)
                 ZStack {
                     Circle()

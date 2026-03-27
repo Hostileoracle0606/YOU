@@ -9,7 +9,7 @@ enum InsightType {
         switch self {
         case .causal: return YouTheme.tertiary
         case .correlated: return YouTheme.primaryContainer
-        case .cluster: return Color(hex: 0xF59E0B)
+        case .cluster: return YouTheme.clusterAccent
         }
     }
 
@@ -25,7 +25,7 @@ enum InsightType {
         switch self {
         case .causal: return YouTheme.tertiary
         case .correlated: return YouTheme.primaryContainer
-        case .cluster: return Color(hex: 0xF59E0B)
+        case .cluster: return YouTheme.clusterAccent
         }
     }
 }
@@ -57,7 +57,7 @@ struct InsightCard: View {
 
             // Highlight
             Text(highlightText)
-                .font(.system(size: 24, weight: .black))
+                .font(YouTheme.headline(24))
                 .foregroundColor(.white)
 
             // Footer

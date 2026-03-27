@@ -18,6 +18,7 @@ enum YouTheme {
 
     static let tertiary = Color(hex: 0xF7BE1D)
     static let tertiaryWarm = Color(hex: 0xFFB95F)
+    static let clusterAccent = Color(hex: 0xF59E0B)
 
     static let onSurface = Color(hex: 0xE4E1E9)
     static let onSurfaceVariant = Color(hex: 0xCCC3D8)

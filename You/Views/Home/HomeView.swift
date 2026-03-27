@@ -2,17 +2,18 @@ import SwiftUI
 import SwiftData
 
 struct HomeView: View {
-    @Query(filter: #Predicate<Habit> { $0.isActive }) var habits: [Habit]
+    @Query(filter: #Predicate<Habit> { $0.isActive == true }) var habits: [Habit]
     @Query var profiles: [UserProfile]
 
     @State private var todayLogs: Set<String> = []  // habitIds completed today
 
     private var userId: String { profiles.first?.userId ?? "" }
 
-    private var ringData: [(name: String, progress: Double, color: Color, symbol: String)] {
+    private var ringData: [(id: String, name: String, progress: Double, color: Color, symbol: String)] {
         let ringColors: [Color] = [YouTheme.primary, YouTheme.secondary, YouTheme.tertiary]
         return habits.prefix(3).enumerated().map { index, habit in
             (
+                id: habit.habitId,
                 name: habit.name,
                 progress: todayLogs.contains(habit.habitId) ? 1.0 : habit.completionRate,
                 color: ringColors[index % ringColors.count],
