@@ -9,72 +9,113 @@ import SwiftUI
 import SwiftData
 
 struct ContentView: View {
-    @Environment(\.modelContext) private var modelContext
-    @Query private var items: [Item]
+    @Query var profiles: [UserProfile]
+
+    private var profile: UserProfile? { profiles.first }
 
     var body: some View {
-        NavigationViewWrapper {
-            List {
-                ForEach(items) { item in
-                    NavigationLink {
-                        Text("Item at \(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))")
-                    } label: {
-                        Text(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))
-                    }
-                }
-                .onDelete(perform: deleteItems)
-            }
-#if os(macOS)
-            .navigationSplitViewColumnWidth(min: 180, ideal: 200)
-#endif
-            .toolbar {
-#if os(iOS)
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
-                }
-#endif
-                ToolbarItem {
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
-                    }
-                }
-            }
+        if profile?.onboardingCompleted == true {
+            MainTabView()
+        } else {
+            OnboardingPlaceholderView(existingProfile: profile)
         }
     }
+}
 
-    private func addItem() {
-        withAnimation {
-            let newItem = Item(timestamp: Date())
-            modelContext.insert(newItem)
+/// Temporary onboarding entry point — replaced by full OnboardingFlowView in Phase 8
+struct OnboardingPlaceholderView: View {
+    let existingProfile: UserProfile?
+    @Environment(\.modelContext) var modelContext
+    @State private var selectedGoals: Set<Goal> = []
+
+    var body: some View {
+        GoalSelectionView(selectedGoals: $selectedGoals) {
+            let profile: UserProfile
+            if let existing = existingProfile {
+                profile = existing
+            } else {
+                profile = UserProfile()
+                modelContext.insert(profile)
+            }
+            profile.selectedGoals = selectedGoals.map(\.rawValue)
+            profile.onboardingCompleted = true
         }
     }
+}
 
-    private func deleteItems(offsets: IndexSet) {
-        withAnimation {
-            for index in offsets {
-                modelContext.delete(items[index])
+struct MainTabView: View {
+    @State private var selectedTab: AppTab = .home
+
+    var body: some View {
+        ZStack(alignment: .bottom) {
+            YouTheme.background.ignoresSafeArea()
+
+            ZStack {
+                NavigationStack {
+                    HomeView()
+                        .navigationTitle("Good morning")
+                        .navigationBarTitleDisplayMode(.large)
+                }
+                .opacity(selectedTab == .home ? 1 : 0)
+                .allowsHitTesting(selectedTab == .home)
+
+                NavigationStack {
+                    CheckInPlaceholderView()
+                        .navigationTitle("Check In")
+                }
+                .opacity(selectedTab == .checkIn ? 1 : 0)
+                .allowsHitTesting(selectedTab == .checkIn)
+
+                NavigationStack {
+                    InsightsPlaceholderView()
+                        .navigationTitle("Insights")
+                }
+                .opacity(selectedTab == .insights ? 1 : 0)
+                .allowsHitTesting(selectedTab == .insights)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+            CustomTabBar(selectedTab: $selectedTab)
+        }
+    }
+}
+
+/// Placeholder — replaced by DailyCheckInView in Phase 2
+struct CheckInPlaceholderView: View {
+    var body: some View {
+        ZStack {
+            YouTheme.background.ignoresSafeArea()
+            VStack(spacing: 16) {
+                Image(systemName: "mic.fill")
+                    .font(.system(size: 48))
+                    .foregroundColor(YouTheme.primary)
+                Text("Daily Check-in")
+                    .font(YouTheme.headline(20))
+                    .foregroundColor(.white)
+                Text("Coming in Phase 2")
+                    .font(YouTheme.bodyFont(14))
+                    .foregroundColor(YouTheme.onSurfaceVariant)
             }
         }
     }
 }
 
-fileprivate struct NavigationViewWrapper<Content: View>: View {
-    let content: () -> Content
-
+/// Placeholder — replaced by InsightsView in Phase 4
+struct InsightsPlaceholderView: View {
     var body: some View {
-#if os(macOS)
-        NavigationSplitView {
-            content()
-        } detail: {
-            Text("Select an item")
+        ZStack {
+            YouTheme.background.ignoresSafeArea()
+            VStack(spacing: 16) {
+                Image(systemName: "chart.line.uptrend.xyaxis")
+                    .font(.system(size: 48))
+                    .foregroundColor(YouTheme.tertiary)
+                Text("Your Insights")
+                    .font(YouTheme.headline(20))
+                    .foregroundColor(.white)
+                Text("Coming in Phase 4")
+                    .font(YouTheme.bodyFont(14))
+                    .foregroundColor(YouTheme.onSurfaceVariant)
+            }
         }
-#else
-        content()
-#endif
     }
-}
-
-#Preview {
-    ContentView()
-        .modelContainer(for: Item.self, inMemory: true)
 }
