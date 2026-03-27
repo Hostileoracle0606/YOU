@@ -33,7 +33,7 @@ enum YouTheme {
     static func headline(_ size: CGFloat) -> Font {
         .custom("Manrope-Bold", size: size)
     }
-    static func body(_ size: CGFloat) -> Font {
+    static func bodyFont(_ size: CGFloat) -> Font {
         .custom("Inter-Regular", size: size)
     }
     static func label(_ size: CGFloat) -> Font {
