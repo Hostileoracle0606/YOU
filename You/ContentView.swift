@@ -51,12 +51,27 @@ struct MainTabView: View {
             YouTheme.background.ignoresSafeArea()
 
             ZStack {
-                NavigationStack { HomeView() }
-                    .opacity(selectedTab == .home ? 1 : 0)
-                NavigationStack { CheckInPlaceholderView() }
-                    .opacity(selectedTab == .checkIn ? 1 : 0)
-                NavigationStack { InsightsPlaceholderView() }
-                    .opacity(selectedTab == .insights ? 1 : 0)
+                NavigationStack {
+                    HomeView()
+                        .navigationTitle("Good morning")
+                        .navigationBarTitleDisplayMode(.large)
+                }
+                .opacity(selectedTab == .home ? 1 : 0)
+                .allowsHitTesting(selectedTab == .home)
+
+                NavigationStack {
+                    CheckInPlaceholderView()
+                        .navigationTitle("Check In")
+                }
+                .opacity(selectedTab == .checkIn ? 1 : 0)
+                .allowsHitTesting(selectedTab == .checkIn)
+
+                NavigationStack {
+                    InsightsPlaceholderView()
+                        .navigationTitle("Insights")
+                }
+                .opacity(selectedTab == .insights ? 1 : 0)
+                .allowsHitTesting(selectedTab == .insights)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
 
@@ -82,7 +97,6 @@ struct CheckInPlaceholderView: View {
                     .foregroundColor(YouTheme.onSurfaceVariant)
             }
         }
-        .navigationTitle("Check In")
     }
 }
 
@@ -103,6 +117,5 @@ struct InsightsPlaceholderView: View {
                     .foregroundColor(YouTheme.onSurfaceVariant)
             }
         }
-        .navigationTitle("Insights")
     }
 }

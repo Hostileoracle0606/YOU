@@ -63,8 +63,6 @@ struct HomeView: View {
                 .padding(.bottom, 120)
             }
         }
-        .navigationTitle("Good morning")
-        .navigationBarTitleDisplayMode(.large)
     }
 
     private func toggleHabit(_ habit: Habit) {
